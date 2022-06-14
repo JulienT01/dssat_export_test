@@ -1,2 +1,0 @@
-sudo apt install pdidev-archive-keyring
-sudo apt install `find ./focal -name "*.deb"`
