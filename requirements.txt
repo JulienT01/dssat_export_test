@@ -36,8 +36,6 @@ fonttools==4.33.3
 future==0.18.2
 gpg===1.13.1-unknown
 gym==0.18.3
-# Editable install with no version control (gym-dssat-pdi==0.0.5)
--e /opt/gym_dssat_pdi/lib/python3.8/site-packages
 gym-notices==0.0.7
 httplib2==0.14.0
 idna==2.8
