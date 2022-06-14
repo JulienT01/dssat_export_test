@@ -8,5 +8,5 @@ sudo apt install pdidev-archive-keyring
 wget https://gac.udc.es/~emilioj/focal.tgz
 tar -xf focal.tgz
 cd focal
-apt install `find . -name "*.deb"`
+#apt install `find . -name "*.deb"`
 
