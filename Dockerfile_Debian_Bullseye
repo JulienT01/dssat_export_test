@@ -8,9 +8,9 @@ RUN apt upgrade -y
 RUN apt install -y wget
 
 ### PDI package install
-RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/debian bullseye main" | tee ./etc/apt/sources.list.d/pdi.list > /dev/null
-RUN wget -O ./etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/debian/pdidev-archive-keyring.gpg
-RUN chmod a+r ./etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg ./etc/apt/sources.list.d/pdi.list
+RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/debian bullseye main" | tee ./pdi.list > /dev/null
+RUN wget -O ./pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/debian/pdidev-archive-keyring.gpg
+RUN chmod a+r ./pdidev-archive-keyring.gpg ./pdi.list
 
 # Temporary workaround to guarantee the updated tarball is downloaded
 # and we are using up-to-date debian packages
