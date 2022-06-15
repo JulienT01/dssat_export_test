@@ -28,6 +28,10 @@ RUN tar -xf bullseye.tgz
 WORKDIR /bullseye
 RUN apt install -y `find . -name "*.deb"`
 
+# install the notebook package
+RUN pip install --no-cache --upgrade pip && pip install --no-cache notebook jupyterlab
+
+
 ### Image config
 ENV VIRTUAL_ENV /opt/gym_dssat_pdi
 ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
