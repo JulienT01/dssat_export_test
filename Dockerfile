@@ -31,7 +31,7 @@ RUN apt install -y `find . -name "*.deb"`
 # install the notebook package
 
 RUN apt install python3-pip -y
-RUN python3 -m pip install --no-cache-dir notebook jupyterlab
+RUN python3 -m pip install --no-cache-dir notebook jupyterlab jupyterhub
 #RUN pip install --no-cache --upgrade pip && pip install --no-cache notebook jupyterlab
 
 
