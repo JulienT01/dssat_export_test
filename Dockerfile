@@ -8,9 +8,9 @@ RUN apt upgrade -y
 RUN apt install -y wget
 
 ### PDI package install
-RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/debian bullseye main" | tee ./pdi.list > /dev/null
-RUN wget -O ./pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/debian/pdidev-archive-keyring.gpg
-RUN chmod a+r ./pdidev-archive-keyring.gpg ./pdi.list
+RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/debian bullseye main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
+RUN wget -O /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/debian/pdidev-archive-keyring.gpg
+RUN chmod a+r /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg /etc/apt/sources.list.d/pdi.list
 
 # Temporary workaround to guarantee the updated tarball is downloaded
 # and we are using up-to-date debian packages
@@ -29,11 +29,11 @@ WORKDIR /bullseye
 RUN apt install -y `find . -name "*.deb"`
 
 ### Image config
-ENV VIRTUAL_ENV ./gym_dssat_pdi
+ENV VIRTUAL_ENV /opt/gym_dssat_pdi
 ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
 RUN echo "export PATH=${PATH}" >> /etc/profile
 
-RUN bash -l -c 'echo export GYM_DSSAT_PDI_PATH="./gym_dssat_pdi/lib/$(python3 -V | tr -d '[:blank:]' | tr '[:upper:]' '[:lower:]' | sed 's/\.[^.]*$//')/site-packages/gym_dssat_pdi" >> /etc/bash.bashrc'
+RUN bash -l -c 'echo export GYM_DSSAT_PDI_PATH="/opt/gym_dssat_pdi/lib/$(python3 -V | tr -d '[:blank:]' | tr '[:upper:]' '[:lower:]' | sed 's/\.[^.]*$//')/site-packages/gym_dssat_pdi" >> /etc/bash.bashrc'
 
 RUN useradd -ms /bin/bash gymusr
 USER gymusr
@@ -42,4 +42,4 @@ ENV BASH_ENV=/etc/profile
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT ["/bin/bash", "-c"]
 
-CMD ["python ./gym_dssat_pdi/samples/run_env.py"]
+CMD ["python /opt/gym_dssat_pdi/samples/run_env.py"]
