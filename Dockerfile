@@ -44,9 +44,10 @@ RUN bash -l -c 'echo export GYM_DSSAT_PDI_PATH="/opt/gym_dssat_pdi/lib/$(python3
 
 
 ### create user with a home directory
-ARG NB_USER
-ARG NB_UID
+ARG NB_USER=test
+ARG NB_UID=1000
 ENV USER ${NB_USER}
+ENV NB_UID ${NB_UID}
 ENV HOME /home/${NB_USER}
 
 
@@ -62,4 +63,10 @@ ENV BASH_ENV=/etc/profile
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT ["/bin/bash", "-c"]
 
-CMD ["python /opt/gym_dssat_pdi/samples/run_env.py"]
+# Make sure the contents of our repo are in ${HOME}
+COPY . ${HOME}
+USER root
+RUN chown -R ${NB_UID} ${HOME}
+USER ${NB_USER}
+
+#CMD ["python /opt/gym_dssat_pdi/samples/run_env.py"]
