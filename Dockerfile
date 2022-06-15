@@ -42,9 +42,22 @@ RUN echo "export PATH=${PATH}" >> /etc/profile
 
 RUN bash -l -c 'echo export GYM_DSSAT_PDI_PATH="/opt/gym_dssat_pdi/lib/$(python3 -V | tr -d '[:blank:]' | tr '[:upper:]' '[:lower:]' | sed 's/\.[^.]*$//')/site-packages/gym_dssat_pdi" >> /etc/bash.bashrc'
 
-RUN useradd -ms /bin/bash gymusr
-USER gymusr
-WORKDIR /home/gymusr
+
+### create user with a home directory
+ARG NB_USER
+ARG NB_UID
+ENV USER ${NB_USER}
+ENV HOME /home/${NB_USER}
+
+
+RUN adduser --disabled-password \
+    --gecos "Default user" \
+    --uid ${NB_UID} \
+    ${NB_USER}
+WORKDIR ${HOME}
+#RUN useradd -ms /bin/bash gymusr
+#USER gymusr
+#WORKDIR /home/gymusr
 ENV BASH_ENV=/etc/profile
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT ["/bin/bash", "-c"]
