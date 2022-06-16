@@ -32,6 +32,9 @@ RUN apt install -y `find . -name "*.deb"`
 
 RUN apt install python3-pip -y
 RUN python3 -m pip install --no-cache-dir notebook jupyterlab jupyterhub
+#RUN python3 -m pip install --no-cache-dir stable-baselines3==1.4.0
+#RUN python3 -m pip install d3rlpy
+
 #RUN pip install --no-cache --upgrade pip && pip install --no-cache notebook jupyterlab
 
 
