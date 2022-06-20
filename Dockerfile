@@ -1,4 +1,4 @@
-FROM ubuntu:bionic as builder
+FROM debian:sid as builder
 
 USER 0
 
@@ -8,8 +8,8 @@ RUN apt upgrade -y
 RUN apt install -y wget
 
 ### PDI package install
-RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/ubuntu bionic main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
-RUN wget -O /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/ubuntu/pdidev-archive-keyring.gpg
+RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/debian sid main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
+RUN wget -O /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/debian/pdidev-archive-keyring.gpg
 RUN chmod a+r /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg /etc/apt/sources.list.d/pdi.list
 
 # Temporary workaround to guarantee the updated tarball is downloaded
@@ -23,9 +23,9 @@ RUN apt update -y
 RUN apt install -y pdidev-archive-keyring
 
 ### Custom packages
-RUN wget https://gac.udc.es/~emilioj/bionic.tgz
-RUN tar -xf bionic.tgz
-WORKDIR /bionic
+RUN wget https://gac.udc.es/~emilioj/sid.tgz
+RUN tar -xf sid.tgz
+WORKDIR /sid
 RUN apt install -y `find . -name "*.deb"`
 
 ### Image config
