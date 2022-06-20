@@ -1,21 +1,15 @@
-#####################################
-############## BUILDER ##############
-#####################################
-FROM debian:sid as builder
+FROM ubuntu:focal as builder
 
 USER 0
 
-RUN apt update -y \
- && apt upgrade -y \
- && apt autoremove -y \
- && apt clean \
- && apt autoclean
+RUN apt update -y
+RUN apt upgrade -y
 
-RUN apt install -y wget python3-pip python3-dev
+RUN apt install -y wget
 
 ### PDI package install
-RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/debian sid main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
-RUN wget -O /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/debian/pdidev-archive-keyring.gpg
+RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/ubuntu focal main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
+RUN wget -O /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/ubuntu/pdidev-archive-keyring.gpg
 RUN chmod a+r /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg /etc/apt/sources.list.d/pdi.list
 
 # Temporary workaround to guarantee the updated tarball is downloaded
@@ -26,26 +20,26 @@ RUN chmod a+r /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg /etc/apt/sources
 ADD "https://www.random.org/cgi-bin/randbyte?nbytes=10&format=h" skipcache
 
 RUN apt update -y
-RUN apt upgrade -y
-RUN apt install -y pdidev-archive-keyring libpdi-dev pdiplugin-pycall cmake gfortran python3-numpy git
+RUN apt install -y pdidev-archive-keyring
 
-# DSSAT INSTALLATION
-RUN git clone --recurse-submodules https://gitlab.inria.fr/rgautron/gym_dssat_pdi.git
-RUN mkdir /gym_dssat_pdi/dssat-csm-os/build
-WORKDIR /gym_dssat_pdi/dssat-csm-os/build
-RUN cmake -DCMAKE_INSTALL_PREFIX='/opt/dssat_pdi' -DCMAKE_PREFIX_PATH='/usr/share/paraconf/cmake;/usr/share/pdi/cmake' ../
-RUN make
-RUN make install
+### Custom packages
+RUN wget https://gac.udc.es/~emilioj/focal.tgz
+RUN tar -xf focal.tgz
+WORKDIR /focal
+RUN apt install -y `find . -name "*.deb"`
 
+### Image config
+ENV VIRTUAL_ENV /opt/gym_dssat_pdi
+ENV PATH "${VIRTUAL_ENV}/bin:${PATH}"
+RUN echo "export PATH=${PATH}" >> /etc/profile
 
-# # COPY DSSAT FILES
-WORKDIR /gym_dssat_pdi
-RUN mv dssat-csm-data/* /opt/dssat_pdi/
-RUN pip3 install -e ./gym-dssat-pdi
+RUN bash -l -c 'echo export GYM_DSSAT_PDI_PATH="/opt/gym_dssat_pdi/lib/$(python3 -V | tr -d '[:blank:]' | tr '[:upper:]' '[:lower:]' | sed 's/\.[^.]*$//')/site-packages/gym_dssat_pdi" >> /etc/bash.bashrc'
 
-WORKDIR /
-
+RUN useradd -ms /bin/bash gymusr
+USER gymusr
+WORKDIR /home/gymusr
 ENV BASH_ENV=/etc/profile
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["cd /gym_dssat_pdi/gym-dssat-pdi/gym_dssat_pdi_samples && python3 run_env.py"]
+
+CMD ["python /opt/gym_dssat_pdi/samples/run_env.py"]
