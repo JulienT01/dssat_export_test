@@ -1,4 +1,4 @@
-FROM ubuntu:impish as builder
+FROM ubuntu:jammy as builder
 
 USER 0
 
@@ -8,7 +8,7 @@ RUN apt upgrade -y
 RUN apt install -y wget
 
 ### PDI package install
-RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/ubuntu impish main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
+RUN echo "deb [ arch=amd64 ] https://raw.githubusercontent.com/pdidev/repo/ubuntu jammy main" | tee /etc/apt/sources.list.d/pdi.list > /dev/null
 RUN wget -O /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg https://raw.githubusercontent.com/pdidev/repo/ubuntu/pdidev-archive-keyring.gpg
 RUN chmod a+r /etc/apt/trusted.gpg.d/pdidev-archive-keyring.gpg /etc/apt/sources.list.d/pdi.list
 
@@ -23,9 +23,9 @@ RUN apt update -y
 RUN apt install -y pdidev-archive-keyring
 
 ### Custom packages
-RUN wget https://gac.udc.es/~emilioj/impish.tgz
-RUN tar -xf impish.tgz
-WORKDIR /impish
+RUN wget https://gac.udc.es/~emilioj/jammy.tgz
+RUN tar -xf jammy.tgz
+WORKDIR /jammy
 RUN apt install -y `find . -name "*.deb"`
 
 ### Image config
